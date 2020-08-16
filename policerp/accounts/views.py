@@ -55,4 +55,9 @@ def login(request):
 
 def logout(request):
     auth.logout(request)
-    return redirect('/')
+    return redirect('login')
+
+
+# def profile(request,id):
+#     user = User.objects.get(id=id)
+#     return render(request, 'profile.html', {"user":user})
