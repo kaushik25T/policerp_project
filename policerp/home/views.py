@@ -8,6 +8,10 @@ from file.models import  FileDoc
 # Create your views here.
 
 def home(request):
+    if  request.user.is_superuser:
+        o_count = Officer.objects.all()
+        f_count = FileDoc.objects.all()
+        return render(request,'admin_home.html',{'o':o_count ,'f':f_count})
     if request.user.is_authenticated == True:
         o_count = Officer.objects.all()
         f_count = FileDoc.objects.all()
