@@ -9,4 +9,6 @@ class Officer(models.Model):
     badge=models.CharField(max_length=30)
     strip = models.CharField(max_length=30)
     rank = models.CharField(max_length=30)
+    
+
     uploaded_at = models.DateTimeField(auto_now_add=True,null=True)

@@ -1,38 +1,54 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.contrib.auth.models import User ,auth
+from .models import Key
+from  .models import Myuser
 
 
 # Create your views here.
 
 def register(request):
-
+    
     if request.method == 'POST':
         name = request.POST['name']
         username = request.POST['username']
         email = request.POST['email']
         password = request.POST['password']
         cpassword = request.POST['cpassword']
+        ukey = request.POST['key']
+        # k= Key.objects.all()
         
-        if password == cpassword:
-            if User.objects.filter(username=username).exists():
-                messages.info(request, "Username taken...")
-                return redirect('register')
-            elif User.objects.filter(email=email).exists():
-                messages.info(request, "Email taken...")
-                return redirect('register')
+
+        if Key.objects.filter(license_key=ukey).exists():
+            if password == cpassword:
+                if User.objects.filter(username=username).exists():
+                    messages.info(request, "Username taken...")
+                    return redirect('register')
+                elif User.objects.filter(email=email).exists():
+                    messages.info(request, "Email taken...")
+                    return redirect('register')
+            
+                else:
+                    user=User.objects.create_user(username=username, password=password, email=email , first_name=name)
+                
+                    user.save();
+                    Myuser.objects.create(user_id=user.id,lkey=ukey).save()
+                    print("user created")
+                    return redirect('login',)
             else:
-                user=User.objects.create_user(username=username, password=password, email=email , first_name=name)
-                user.save();
-                print("user created")
-                return redirect('login')
+                messages.info(request, "Password not matching...")
+                return redirect('register')
         else:
-            messages.info(request, "Password not matching...")
+            messages.info(request, "Key not available...")
+            # print(k)
             return redirect('register')
+
         return redirect('/')
 
     else:
+        
         return render(request , 'register.html')
+
 
 
 def login(request):
@@ -52,6 +68,7 @@ def login(request):
     
     else:
         return render(request,'login.html')
+
 
 def logout(request):
     auth.logout(request)
